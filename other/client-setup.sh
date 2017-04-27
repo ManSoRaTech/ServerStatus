@@ -104,7 +104,7 @@ if [ ! $SKIP ]; then
 	user_input
 	PASSWORD="$answer"
 else
-	DATA=$(head -n 9 "$CLIENT_BIN")
+	DATA=$(head -n 12 "$CLIENT_BIN")
 
 	SERVER=$(echo "$DATA" | sed -n "s/SERVER\( \|\)=\( \|\)//p" | tr -d '"')
 	PORT=$(echo "$DATA" | sed -n "s/PORT\( \|\)=\( \|\)//p" | tr -d '"')
