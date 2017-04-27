@@ -84,8 +84,11 @@ cp -r ServerStatus/web/* /home/wwwroot/status/
 ```
 cp ServerStatus/other/sergate.service /etc/systemd/system/sergate.service 
 vim /etc/systemd/system/sergate.service
+systemctl daemon-reload
+systemctl enable sergate
+systemctl start sergate
 ```
--d 参数为 网站目录 酌情修改
+注: -d 参数为 网站目录 酌情修改
 
 【客户端配置】
 
