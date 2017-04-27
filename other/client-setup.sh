@@ -211,8 +211,8 @@ sudo cp -a "$CLIENT_BIN" "$_CLIENT"
 
 # Install service
 if [ "$INIT" == "systemd" ]; then
-	echo "Under which user should the script be run? [${bold}http${normal}, ...]"
-	user_input "http"
+	echo "Under which user should the script be run? [${bold}root${normal}, ...]"
+	user_input "root"
 	RUNUSER="$answer"
 	if ! id -u "$RUNUSER" >/dev/null 2>&1; then
 		echo "Aborting."
