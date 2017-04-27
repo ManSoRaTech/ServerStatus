@@ -239,7 +239,7 @@ After=network.target
 Type=simple
 $DAMN_IT_BASH
 User=$RUNUSER
-ExecStart=$_CLIENT
+ExecStart=/usr/bin/python $_CLIENT
 
 [Install]
 WantedBy=multi-user.target
