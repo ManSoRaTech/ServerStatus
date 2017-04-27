@@ -195,6 +195,11 @@ else
 fi
 
 # Install client script
+if [ "$CLIENT" == "bash" ]; then
+	DAMN_IT_BASH="IgnoreSIGPIPE=no"
+fi
+_CLIENT=$(echo "$CLIENT_BIN" | sed "s|$CWD|/usr/local/share|g")
+echo "Installing script to $_CLIENT"
 if [ -f $_CLIENT ]; then
 	echo "Target already exists, overwrite? [${bold}yes${normal}/no]"
 	user_input "yes" "no" "y" "n"
