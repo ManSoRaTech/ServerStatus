@@ -65,24 +65,24 @@ echo "ServerStatus Client Setup Script"
 echo "https://github.com/BotoX/ServerStatus"
 echo
 
-echo "Which client implementation do you want to use? [${bold}python${normal}, python-psutil]"
-user_input "python" "python-psutil"
+echo "Which client implementation do you want to use? [${bold}python-psutil${normal}, python]"
+user_input "python-psutil" "python"
 CLIENT="${answer,,}"
 
-if [ "$CLIENT" == "python" ] && [ -f "${CWD}/serverstatus-client.py" ]; then
-	echo "Python implementation already found in ${CWD}"
-	echo "Do you want to skip the client configuration and update it? [${bold}yes${normal}/no]"
-	user_input "yes" "no" "y" "n"
-	if [ "${answer,,}" == "yes" ] || [ "${answer,,}" == "y" ]; then
-		CLIENT_BIN="${CWD}/serverstatus-client.py"
-		SKIP=true
-	fi
-elif [ "$CLIENT" == "python-psutil" ] && [ -f "${CWD}/serverstatus-client-psutil.py" ]; then
+if [ "$CLIENT" == "python-psutil" ] && [ -f "${CWD}/serverstatus-client-psutil.py" ]; then
 	echo "Python-psutil implementation already found in ${CWD}"
 	echo "Do you want to skip the client configuration and update it? [${bold}yes${normal}/no]"
 	user_input "yes" "no" "y" "n"
 	if [ "${answer,,}" == "yes" ] || [ "${answer,,}" == "y" ]; then
 		CLIENT_BIN="${CWD}/serverstatus-client-psutil.py"
+		SKIP=true
+	fi
+elif [ "$CLIENT" == "python" ] && [ -f "${CWD}/serverstatus-client.py" ]; then
+	echo "Python implementation already found in ${CWD}"
+	echo "Do you want to skip the client configuration and update it? [${bold}yes${normal}/no]"
+	user_input "yes" "no" "y" "n"
+	if [ "${answer,,}" == "yes" ] || [ "${answer,,}" == "y" ]; then
+		CLIENT_BIN="${CWD}/serverstatus-client.py"
 		SKIP=true
 	fi
 fi
@@ -131,7 +131,18 @@ if [ "${answer,,}" != "yes" ] && [ "${answer,,}" != "y" ]; then
 	exit 1
 fi
 
-if [ "$CLIENT" == "python" ]; then
+if [ "$CLIENT" == "python-psutil" ]; then
+	echo "Magic going on..."
+	curl -L "$PYTHONPSUTIL_CLIENT" | sed -e "0,/^SERVER = .*$/s//SERVER = \"${SERVER}\"/" \
+		-e "0,/^PORT = .*$/s//PORT = ${PORT}/" \
+		-e "0,/^USER = .*$/s//USER = \"${USERNAME}\"/" \
+		-e "0,/^PASSWORD = .*$/s//PASSWORD = \"${PASSWORD}\"/" > "${CWD}/serverstatus-client-psutil.py"
+	chmod +x "${CWD}/serverstatus-client-psutil.py"
+	CLIENT_BIN="${CWD}/serverstatus-client-psutil.py"
+	echo
+	echo "Python-psutil client copied to ${CWD}/serverstatus-client-psutil.py"
+
+elif [ "$CLIENT" == "python" ]; then
 	echo "Magic going on..."
 	curl -L "$PYTHON_CLIENT" | sed -e "0,/^SERVER = .*$/s//SERVER = \"${SERVER}\"/" \
 		-e "0,/^PORT = .*$/s//PORT = ${PORT}/" \
@@ -142,16 +153,6 @@ if [ "$CLIENT" == "python" ]; then
 	echo
 	echo "Python client copied to ${CWD}/serverstatus-client.py"
 
-elif [ "$CLIENT" == "python-psutil" ]; then
-	echo "Magic going on..."
-	curl -L "$PYTHONPSUTIL_CLIENT" | sed -e "0,/^SERVER = .*$/s//SERVER = \"${SERVER}\"/" \
-		-e "0,/^PORT = .*$/s//PORT = ${PORT}/" \
-		-e "0,/^USER = .*$/s//USER = \"${USERNAME}\"/" \
-		-e "0,/^PASSWORD = .*$/s//PASSWORD = \"${PASSWORD}\"/" > "${CWD}/serverstatus-client-psutil.py"
-	chmod +x "${CWD}/serverstatus-client.py"
-	CLIENT_BIN="${CWD}/serverstatus-client-psutil.py"
-	echo
-	echo "Python-psutil client copied to ${CWD}/serverstatus-client-psutil.py"
 fi
 
 echo -e "Do you want to autostart the script with your system? \e[0;31mThis requires sudo.\e[0m [${bold}yes${normal}/no]"
@@ -194,11 +195,6 @@ else
 fi
 
 # Install client script
-if [ "$CLIENT" == "bash" ]; then
-	DAMN_IT_BASH="IgnoreSIGPIPE=no"
-fi
-_CLIENT=$(echo "$CLIENT_BIN" | sed "s|$CWD|/usr/local/share|g")
-echo "Installing script to $_CLIENT"
 if [ -f $_CLIENT ]; then
 	echo "Target already exists, overwrite? [${bold}yes${normal}/no]"
 	user_input "yes" "no" "y" "n"
