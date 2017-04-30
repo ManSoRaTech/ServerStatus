@@ -5,29 +5,29 @@ var server_status = new Array();
 
 function timeSince(date) {
 	if(date == 0)
-		return "从未.";
+		return "从未";
 
 	var seconds = Math.floor((new Date() - date) / 1000);
 	var interval = Math.floor(seconds / 31536000);
 
 	if (interval > 1)
-		return interval + " 年前.";
+		return interval + " 年前";
 	interval = Math.floor(seconds / 2592000);
 	if (interval > 1)
-		return interval + " 月前.";
+		return interval + " 月前";
 	interval = Math.floor(seconds / 86400);
 	if (interval > 1)
-		return interval + " 日前.";
+		return interval + " 日前";
 	interval = Math.floor(seconds / 3600);
 	if (interval > 1)
-		return interval + " 小时前.";
+		return interval + " 小时前";
 	interval = Math.floor(seconds / 60);
 	if (interval > 1)
-		return interval + " 分钟前.";
+		return interval + " 分钟前";
 	/*if(Math.floor(seconds) >= 5)
 		return Math.floor(seconds) + " seconds";*/
 	else
-		return "几秒前.";
+		return "几秒前";
 }
 
 function bytesToSize(bytes, precision, si)
@@ -118,10 +118,10 @@ function uptime() {
 			// Online4
 			if (result.servers[i].online4) {
 				TableRow.children["online4"].children[0].children[0].className = "progress-bar progress-bar-success";
-				TableRow.children["online4"].children[0].children[0].innerHTML = "<small>开启</small>";
+				TableRow.children["online4"].children[0].children[0].innerHTML = "<small>运行中</small>";
 			} else {
 				TableRow.children["online4"].children[0].children[0].className = "progress-bar progress-bar-danger";
-				TableRow.children["online4"].children[0].children[0].innerHTML = "<small>关闭</small>";
+				TableRow.children["online4"].children[0].children[0].innerHTML = "<small>宕机</small>";
 			}
 
 			// Online6
@@ -183,19 +183,23 @@ function uptime() {
 
 				// Network
 				var netstr = "";
-				if(result.servers[i].network_rx*8 < 1000)
-					netstr += result.servers[i].network_rx.toFixed(0)*8 + "B";
-				else if(result.servers[i].network_rx*8 < 1000*1000)
-					netstr += (result.servers[i].network_rx/1000).toFixed(0)*8 + "K";
-				else
-					netstr += (result.servers[i].network_rx/1000/1000).toFixed(1)*8 + "M";
+				if(result.servers[i].network_rx < 1000)
+					netstr += result.servers[i].network_rx.toFixed(0) + "B";
+				else if(result.servers[i].network_rx < 1000*1000)
+					netstr += (result.servers[i].network_rx/1000).toFixed(0) + "K";
+				else if(result.servers[i].network_rx < 1000*1000*1000)
+					netstr += (result.servers[i].network_rx/1000/1000).toFixed(1) + "M";
+                                else
+                                        netstr += (result.servers[i].network_rx/1000/1000/1000).toFixed(2) + "G";
 				netstr += " | "
-				if(result.servers[i].network_tx*8 < 1000)
-					netstr += result.servers[i].network_tx.toFixed(0)*8 + "B";
-				else if(result.servers[i].network_tx*8 < 1000*1000)
-					netstr += (result.servers[i].network_tx/1000).toFixed(0)*8 + "K";
-				else
-					netstr += (result.servers[i].network_tx/1000/1000).toFixed(1)*8 + "M";
+				if(result.servers[i].network_tx < 1000)
+					netstr += result.servers[i].network_tx.toFixed(0) + "B";
+				else if(result.servers[i].network_tx < 1000*1000)
+					netstr += (result.servers[i].network_tx/1000).toFixed(0) + "K";
+				else if(result.servers[i].network_tx < 1000*1000*1000)
+					netstr += (result.servers[i].network_tx/1000/1000).toFixed(1) + "M";
+                                else
+                                        netstr += (result.servers[i].network_tx/1000/1000/1000).toFixed(2) + "G";
 				TableRow.children["network"].innerHTML = netstr;
 
 				//Traffic
